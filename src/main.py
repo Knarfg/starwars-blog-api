@@ -10,6 +10,9 @@ from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User
 #from models import Person
+# import urllib.request, json
+import requests
+import json
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -30,14 +33,31 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/user', methods=['GET'])
+@app.route('/users', methods=['GET'])
 def handle_hello():
+    users = User.query.all()
+    users_serialize = list(map(lambda user: user.serialize(), users))
 
     response_body = {
-        "msg": "Hello, this is your GET /user response "
+        "msg": "Hello, this is your GET /users response ",
+        "results": users_serialize
     }
 
     return jsonify(response_body), 200
+
+
+@app.route('/people', methods=['GET'])
+def handle_people():
+    response = requests.get("https://www.swapi.tech/api/people")
+    # print(response.json())
+    return response.json(), 200
+
+
+@app.route('/people/<int:people_id>', methods=['GET'])
+def handle_one_people(people_id):
+    response = requests.get(f"https://www.swapi.tech/api/people/{people_id}")
+    return response.json(), 200
+
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
