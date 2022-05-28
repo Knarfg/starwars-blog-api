@@ -63,28 +63,6 @@ class Planets(db.Model):
         self.uid = uid
 
 
-# {
-#     "properties": {
-#         "diameter": "10200",
-#         "rotation_period": "24",
-#         "orbital_period": "4818",
-#         "gravity": "1 standard",
-#         "population": "1000",
-#         "climate": "temperate, tropical",
-#         "terrain": "jungle, rainforests",
-#         "surface_water": "8",
-#         "created": "2022-05-28T05:31:07.852Z",
-#         "edited": "2022-05-28T05:31:07.852Z",
-#         "name": "Yavin IV",
-#         "url": "https://www.swapi.tech/api/planets/3"
-#     },
-#     "description": "A planet.",
-#     "_id": "5f7254c11b7dfa00041c6fb0",
-#     "uid": "3",
-#     "__v": 0
-# }
-
-
 class FavoritePlanets(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))

@@ -8,7 +8,8 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Planets, FavoritePlanets, People, FavoritePeople
+from models import db, User, Planets
+# from models import db, User, Planets, FavoritePlanets, People, FavoritePeople
 #from models import Person
 # import urllib.request, json
 import requests
@@ -67,10 +68,10 @@ def handle_planets():
         for planet in response_decoded["results"]:
             response_one_planet = requests.get(planet["url"])
             response_one_planet_decoded = response_one_planet.json()
-            response_one_planet_decoded["result"]
-            print("Soy un pleneta solo solito", response_one_planet_decoded)
+            response_one_planet_decoded["result"] 
             one_planet = Planets(**response_one_planet_decoded["result"]["properties"])
-            print("Soy el objeto", one_planet)
+            db.session.add(one_planet)
+        db.session.commit()
 
     return response_decoded, 200
 
@@ -80,6 +81,14 @@ def handle_one_planet(planet_id):
     response = requests.get(f"https://www.swapi.tech/api/planets/{planet_id}")
     return response.json(), 200
 
+
+@app.route('/favorite/planet/<int:planet_id>', methods=['POST'])
+def favorite_planet(planet_id):
+    user = User.query.filter_by(is_active=True)
+    planet = Planets.query.all()
+    print(user[0], planet[0])
+    return "Holax", 200
+    
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
