@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, User, Planets, FavoritePlanets, People, FavoritePeople
 #from models import Person
 # import urllib.request, json
 import requests
@@ -49,13 +49,35 @@ def handle_hello():
 @app.route('/people', methods=['GET'])
 def handle_people():
     response = requests.get("https://www.swapi.tech/api/people")
-    # print(response.json())
     return response.json(), 200
 
 
 @app.route('/people/<int:people_id>', methods=['GET'])
 def handle_one_people(people_id):
     response = requests.get(f"https://www.swapi.tech/api/people/{people_id}")
+    return response.json(), 200
+
+
+@app.route('/planets', methods=['GET'])
+def handle_planets():
+    response = requests.get("https://www.swapi.tech/api/planets")
+    response_decoded = response.json()
+    planets = Planets.query.all()
+    if len(planets) == 0:
+        for planet in response_decoded["results"]:
+            response_one_planet = requests.get(planet["url"])
+            response_one_planet_decoded = response_one_planet.json()
+            response_one_planet_decoded["result"]
+            print("Soy un pleneta solo solito", response_one_planet_decoded)
+            one_planet = Planets(**response_one_planet_decoded["result"]["properties"])
+            print("Soy el objeto", one_planet)
+
+    return response_decoded, 200
+
+
+@app.route('/planets/<int:planet_id>', methods=['GET'])
+def handle_one_planet(planet_id):
+    response = requests.get(f"https://www.swapi.tech/api/planets/{planet_id}")
     return response.json(), 200
 
 
